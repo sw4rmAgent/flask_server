@@ -12,16 +12,16 @@ def home():
 
 # tests HTTP via entering raw msg
 @app.route('/test_http_raw', methods = ["POST","GET"])
-def test():
+def test_raw():
     if request.method == 'GET':
         return f"The URL is accessed directly. Try going to '/test_http_form' to submit form"
     if request.method == 'POST':
-        form_data = request.form
+        form_data = request.form['x']
         return render_template('data.html',form_data = form_data)
 
 # tests HTTP via entering json msg
 @app.route('/test_http_json', methods = ["POST","GET"])
-def test():
+def test_json():
     if request.method == 'GET':
         return f"The URL is accessed directly (json). Try going to '/test_http_form' to submit form"
     if request.method == 'POST':
@@ -29,13 +29,13 @@ def test():
         return render_template('data.html',form_data = form_data)
 
 # tests HTTP via user inputs
-@app.route('/test_http_form', methods = ["POST","GET"])
-def test_json():
+@app.route('/test_http_json_form', methods = ["POST","GET"])
+def test_http_form():
     if request.method == 'POST':
         variable_name = request.form.get("variable_name")
         variable_value = request.form.get("variable_value")
-        return render_template('data.html',form_data = form_data)
-
+        form_data = variable_value #request.form #['variable_value']
+        return render_template('form.html',form_data = form_data)
 
 # handles a post request
 @app.route('/request_handle_json', methods=['POST','GET'])
@@ -52,4 +52,4 @@ def server_process_json_request():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=443)
