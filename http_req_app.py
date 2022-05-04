@@ -1,55 +1,74 @@
 # server-side app handling HTTP requests from RPi clients
-from flask import Flask, request, render_template, flash, url_for, jsonify
-import requests
+from flask import Flask, request, render_template, flash, jsonify
+import json
 import time
 
 app = Flask(__name__)
 
+### ---------- Utility functions ----------
+# load variables from database
+def fetch_database():
+    # load json file
+    with open('database.json', 'r') as json_file:
+        json_load = json.load(json_file)
+        json_file.close()
+    return json_load
+
+### ---------- Server's endpoints ----------
 # main URL displays welcome page
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# tests HTTP via entering raw msg
-@app.route('/test_http_raw', methods = ["POST","GET"])
-def test_raw():
-    if request.method == 'GET':
-        return f"The URL is accessed directly. Try going to '/test_http_form' to submit form"
-    if request.method == 'POST':
-        form_data = request.form['x']
-        return render_template('data.html',form_data = form_data)
+# test http requests JSON
+@app.route('/test_http_json/', methods = ["POST","GET"])
+def test_http_json():
+    # ----- retrieve data from server
+    if request.method == "GET":
+        # load database
+        database = fetch_database()
+        # OPTIONAL : lookup key of each requested variable
+        for var_name in request.args():
+            # METHOD1 : iterate through json string
+            database_string = json.dumps(database, separators=(',', ':'))
+            for string in database_string:
+                # TODECIDE do something with the data
+                if var_name == string:
+                    print(string)
+                else:
+                    pass
+            # METHOD2 : directly find (nested) variable.s
+            targeted_data = database['clients']['rpi2']['temperature']
+        # show full extracted data
+        flash(database)
 
-# tests HTTP via entering json msg
-@app.route('/test_http_json', methods = ["POST","GET"])
-def test_json():
-    if request.method == 'GET':
-        return f"The URL is accessed directly (json). Try going to '/test_http_form' to submit form"
-    if request.method == 'POST':
-        form_data = request.form
-        return render_template('data.html',form_data = form_data)
+    # ----- post data to server
+    if request.method == "POST":
+        # get device ID from header
+        device_id = request.headers.get('device_id')
+        # load current database
+        data = fetch_database()
+        # for each variable in request
+        for var_name in request.args():
+            # replace database variables with their value
+            data['clients'][device_id][var_name] = var_name.key()
+        # replace database file
+        with open('database.json', 'w') as f:
+            json.dump(data, f)
+            json.close()
+        # show full replaced data
+        flash(data)
 
 # tests HTTP via user inputs
-@app.route('/test_http_json_form', methods = ["POST","GET"])
-def test_http_form():
+@app.route('/test_http_json_form/', methods = ["POST"])
+def test_http_json_form():
     if request.method == 'POST':
         variable_name = request.form.get("variable_name")
         variable_value = request.form.get("variable_value")
-        form_data = variable_value #request.form #['variable_value']
-        return render_template('form.html',form_data = form_data)
+        flash(variable_name, variable_value)
+    else:
+        flash('POST method only !')
 
-# handles a post request
-@app.route('/request_handle_json', methods=['POST','GET'])
-def server_process_json_request():
-    # get json format request
-    input_json = request.get_json(force=True)
-    # print parsed data in terminal
-    print('data from client:', input_json)
-    # process into result ...
-    # ...
-    # send result in json format
-    dictToReturn = {'answer': 42}
-    return jsonify(dictToReturn)
-
-
+### ----- Launch app -----
 if __name__ == '__main__':
-    app.run(port=443)
+    app.run(port=443,debug=True)

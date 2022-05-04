@@ -13,3 +13,6 @@ git clone https://github.com/sw4rmAgent/flask_server.git
 	* Go to Files -> mysite -> templates and copy/paste all the files from of this repo's template folder to yours
 	* Go back to the home page www.eu.pythonanywhere.com. Then in the dashboard menu -> Web -> click the reload green button
 - test requests using Postman
+
+## Tools
+- verify validity of JSON files @ https://jsonformatter.curiousconcept.com/
