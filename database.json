@@ -1,0 +1,16 @@
+{
+	"clients": {
+		"rpi1": [
+			{
+				"temperature": 20,
+				"luminosity": 2000,
+			}
+		],
+		"rpi2": [
+			{
+				"temperature": -4,
+				"luminosity": 10,
+			}
+		]
+	}
+}
