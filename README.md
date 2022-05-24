@@ -19,7 +19,7 @@ git clone https://github.com/sw4rmAgent/flask_server.git
 
 ## Clarifications
 
-![Server-to-Client Framework](http://github.com/sw4rmAgent/flask_server/img/client-server-framework.png)
+![Server-to-Client Framework](img/client-server-framework.png?raw=true "Server-to-client framweork")
 
 ### DFN class
 Data Fusion Nodes (DFNs) are responsible for fusing the data from multiple sensors on the server. They can be created, deleted, or modified by the user via HTTP requests, which should preferably require an authentication header (to be discussed). Here below are the requests responsible of instanciating/deleting the DFN objects, or modify their setup :
