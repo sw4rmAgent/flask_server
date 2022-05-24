@@ -16,3 +16,25 @@ git clone https://github.com/sw4rmAgent/flask_server.git
 
 ## Tools
 - verify validity of JSON files @ https://jsonformatter.curiousconcept.com/
+
+## Clarifications
+
+![Server-to-Client Framework](http://github.com/sw4rmAgent/flask_server/img/client-server-framework.png)
+
+### DFN class
+Data Fusion Nodes (DFNs) are responsible for fusing the data from multiple sensors on the server. They can be created, deleted, or modified by the user via HTTP requests, which should preferably require an authentication header (to be discussed). Here below are the requests responsible of instanciating/deleting the DFN objects, or modify their setup :
+
+#### HTTP request to create DFN
+Below, the variables of each DFN that are setup via an HTTP request :
+- input variables : [file_name (str), client_name (str), var_name(str)]
+- output variables : [file_name (str), output_var_name (str), output_value (float)]
+- operation : "a**2+b/3" (str)
+- frequency : 3600 (float)
+
+#### HTTP request to delete DFN
+This request will delete the DFN to free server CPU time
+- delete : True/False (bool)
+
+#### HTTP request to modify DFN parameters
+This section depends on the level of interoperability between the user and the DFNs (to be discussed). Modify inputs/outputs/operation/frequency of the DFN all at once or separately (if only one field is filled in the request).
+
